@@ -1,0 +1,27 @@
+#!/bin/bash
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+cd $SCRIPT_DIR/..
+set -e
+
+if [[ "${CI}" ]]; then
+    set -x
+fi
+
+function usage() {
+    echo -n \
+        "Usage: $(basename "$0")
+Sets up this project for development.
+"
+}
+
+if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
+
+    # Build docker containers
+    scripts/update
+
+    echo "Bringing up database..."
+    scripts/server --detach
+
+    echo "Done."
+
+fi

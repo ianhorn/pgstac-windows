@@ -1,0 +1,44 @@
+#!/bin/bash
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+cd $SCRIPT_DIR/..
+set -e
+
+if [[ "${CI}" ]]; then
+    set -x
+fi
+
+function usage() {
+    echo -n \
+        "Usage: $(basename "$0") [--db]
+Start a console in the dev container
+
+--db: Instead, start a psql console in the database container.
+"
+}
+
+while [[ "$#" > 0 ]]; do case $1 in
+    --db)
+        DB_CONSOLE=1
+        shift
+        ;;
+    *)
+        usage "Unknown parameter passed: $1"
+        shift
+        shift
+        ;;
+    esac; done
+
+if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
+
+    docker compose up -d
+
+    if [[ "${DB_CONSOLE}" ]]; then
+
+        docker compose exec pgstac psql
+
+        exit 0
+    fi
+
+    docker compose exec pgstac /bin/bash
+
+fi
