@@ -1,40 +1,36 @@
 services:
   pgstac:
     container_name: pgstac
-    image: pgstac
-    build:
-      context: .
-      network: host
-      dockerfile: docker/pgstac/Dockerfile
-      target: pgstac
-    platform: linux/amd64
+    image: ianhorn/pgstac-windows:1.0.0
+    platform: windows/amd64
     environment:
-      - POSTGRES_USER=username
-      - POSTGRES_PASSWORD=password
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=postgis
-      - PGUSER=username
-      - PGPASSWORD=password
+      - PGUSER=postgres
+      - PGPASSWORD=postgres
       - PGDATABASE=postgis
     ports:
       - "5439:5432"
     volumes:
-      - pgstac-pgdata:/var/lib/postgresql/data
+      - pgstac-pgdata:c:\pgsql\data
     command: postgres
-  pypgstac:
-    container_name: pypgstac
-    image: pypgstac
-    build:
-      context: .
-      network: host
-      dockerfile: docker/pypgstac/Dockerfile
-      target: pypgstac
-    platform: linux/amd64
-    environment:
-      - PGHOST=pgstac
-      - PGUSER=username
-      - PGPASSWORD=password
-      - PGDATABASE=postgis
-    depends_on:
-      - pgstac
+  # pypgstac:
+  #   container_name: pypgstac
+  #   image: pypgstac
+  #   build:
+  #     context: .
+  #     network: host
+  #     dockerfile: docker/pypgstac/Dockerfile
+  #     target: pypgstac
+  #   platform: linux/amd64
+  #   environment:
+  #     - PGHOST=pgstac
+  #     - PGUSER=username
+  #     - PGPASSWORD=password
+  #     - PGDATABASE=postgis
+  #   depends_on:
+  #     - pgstac
 volumes:
   pgstac-pgdata:
+    driver: local
